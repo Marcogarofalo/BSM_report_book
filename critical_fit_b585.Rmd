@@ -1,0 +1,73 @@
+# critical fit $\beta=5.85$
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+```
+
+
+$$
+\begin{cases}
+r_{AWI}=P[0]+P[1] \eta + P[2] \mu +P[3] m_0 \\
+m_{PCAC}=P[4]+P[5] \eta + P[6] \mu +P[7] m_0
+\end{cases}
+$$
+
+```{r , child="../fit_all_out/eta_m0_critical_b585_fit_P.tex", eval=TRUE}
+```
+
+
+
+```{r, echo=FALSE, results='asis'}
+file=sprintf("../fit_all_out/eta_m0_critical_b585_fit_data.txt")
+dfn<- read.table(file, header=FALSE, fill=TRUE)
+#names(df) <- c("$L$","$k/m$","err", "$T$","$q2$")
+#df<- df[c("$T$","$L$","$k/m$","err" ,"$q2$")] 
+#kable(df[,-5],digit=20)
+n0<-which(dfn[,1]==0)
+df0<-dfn[n0,]
+n1<-which(dfn[,1]==1)
+df1<-dfn[n1,]
+gg<- ggplot()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df0[,7] , y=df0[,2],
+                          color=as.factor(df0[,9]) ) ,width=0.001)+labs(color = "momentum")
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df0[,7] , ymin=df0[,2]-df0[,3],
+                          ymax=df0[,2]+df0[,3],color=as.factor(df0[,9])) ,width=0.001)
+
+
+# datalist = list()
+# for (n in c(1:5)){
+#   
+ #file=sprintf("../../fit_all_out/eta_m0_critical_b585_fit_out_n%d_L.txt",0)
+# datalist[[n]]<- read.table(file, header=FALSE, fill=TRUE,   
+#                  col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+# 
+# gg<-gg + geom_ribbon(data=datalist[[n]], mapping=aes_string(x=datalist[[n]][,1] , ymin=datalist[[n]][,2]-datalist[[n]][,3], ymax=datalist[[n]][,2]+datalist[[n]][,3]),alpha=0.5, fill="blue")
+# gg<-gg + geom_line(data=datalist[[n]], mapping=aes_string(x=datalist[[n]][,1] , y=datalist[[n]][,2]  ),color="blue" )
+# 
+# }
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$r_AWI$",  output="AUTO",to_print = TRUE)
+
+
+```

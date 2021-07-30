@@ -1,0 +1,108 @@
+
+
+# Jackknife vs Bootstrap
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+
+library(ggplot2)
+library(plotly)
+library(tidyverse)
+library(htmlwidgets)
+library(pander)
+#library(latex2exp)
+library(knitr)
+library(dplyr) #data frame manipulation
+require(scales) # to access break formatting functions
+#library(shiny)
+#library(shinyWidgets)
+library(ggrepel)
+library(Rose)
+```
+
+
+
+
+```{r, echo=FALSE,results='asis'}
+ all_file <- read.table("../b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96/data/phit",header=FALSE,fill = TRUE ,
+                         blank.lines.skip=FALSE,skip=0, comment.char = "")
+head<-data.frame("T","L","rho","eta","csw","mu03","m0")
+head$T<-all_file[1,2]
+head$L<-all_file[2,2]
+head$rho<-all_file[3,2]
+head$eta<-all_file[4,2]
+head$csw<-all_file[5,2]
+head$mu03<-all_file[6,2]
+head$m0<-all_file[7,2]
+dir<-paste("../b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96/out")
+file=sprintf("%s/T%d_L%d_output_jack",dir,head$T,head$L)
+file_boot=sprintf("%s/T%d_L%d_output_boot",dir,head$T,head$L)
+file_boot4000=sprintf("%s/T%d_L%d_output_boot4000",dir,head$T,head$L)
+cat("\n###", file,'\n\n')
+ 
+ mt<-read_df(file)
+ all_obs<- get_all_corr(mt)
+ 
+ mt_boot<-read_df(file_boot)
+ 
+  mt_boot4000<-read_df(file_boot4000)
+
+ 
+ 
+for  (n in all_obs$n){
+ gg<-ggplot()
+ label<-all_obs$corr[n]
+ d<- get_block_n(mt,n)
+ fit<- get_fit_n(mt,n)
+ fit_range<- get_plateaux_range(mt,n)
+ gg<- many_fit_ggplot(d,fit,fit_range,head$T/2,"no",gg,  paste0(label,"J")  )
+ 
+ d_boot<- get_block_n(mt_boot,n)
+ d_boot[,1]<-d_boot[,1]+0.1
+ fit_boot<- get_fit_n(mt_boot,n)
+ fit_range_boot<- get_plateaux_range(mt_boot,n)
+ gg<- many_fit_ggplot(d_boot,fit_boot,fit_range_boot,head$T/2,"no",gg,  paste0(label,"b400")  )
+ 
+ d_boot4000<- get_block_n(mt_boot4000,n)
+ d_boot4000[,1]<-d_boot4000[,1]+0.1
+
+ fit_boot4000<- get_fit_n(mt_boot4000,n)
+ fit_range_boot4000<- get_plateaux_range(mt_boot4000,n)
+ gg<- many_fit_ggplot(d_boot4000,fit_boot4000,fit_range_boot4000,head$T/2,"no",gg,  paste0(label,"b4000")  )
+ 
+ 
+ 
+ cat(label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+ fig<-myplotly(gg)
+}
+ 
+# 
+# 
+# string=sprintf("\\b%s\\b","_0")# need to put the delimiters on the word to grep  
+# l<-grep(string,all_obs[,"corr"])
+# label<-gsub('\\\\b','',string)
+# n<-all_obs[l,"n"]
+# d<- get_block_n(mt,n)
+# fit<- get_fit_n(mt,n)
+# fit_range<- get_plateaux_range(mt,n)
+# gg<- many_fit_ggplot(d,fit,fit_range,T/2,"no",gg,  label  )
+# cat(label,"=", mean_print(fit[1,1],fit[1,2]),'\n')
+# m0=fit[1,1]
+# 
+# kable(df)
+```
+
+
+
+
+```{r ,include=FALSE}
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knit handle the plot
+```

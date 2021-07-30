@@ -1,0 +1,189 @@
+# Trivial U and $\phi$
+
+here we set $U=1\!\!1$ and $\phi=(1,0,0,0)$
+
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+
+
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
+```
+
+
+
+
+```{r,echo=FALSE,results='asis', dev='tikz',  fig.width = 9}
+gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),"r_awi"=c(0),"m_pcac"=c(0))
+gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0))
+
+gdf<-gdf[-1,]
+gdferr<-gdferr[-1,]
+#"b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
+
+dirs<-c(
+"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi",
+"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
+"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi",
+"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
+"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi",
+"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
+
+"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.1",
+"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1",
+"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.1",
+"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1",
+"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.1",
+"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1"
+        )
+count=1
+for (dir in dirs){
+  cat('\n\n## ',dir,'\n\n')
+
+file=sprintf("../%s/data/phit",dir)
+   all_file <- read.table(file,header=FALSE,fill = TRUE ,
+                         blank.lines.skip=FALSE,skip=0, comment.char = "")
+head<-data.frame(c(0))
+head<-head[,-1]
+head$T<-all_file[1,2]
+head$L<-all_file[2,2]
+head$rho<-all_file[3,2]
+head$eta<-all_file[4,2]
+head$csw<-all_file[5,2]
+head$mu03<-all_file[6,2]
+head$m0<-all_file[7,2]
+print(kable(head))
+l<-head[1,]
+lerr<-head[1,]
+file=sprintf("../%s/out/T%d_L%d_output",dir,head$T,head$L)
+ cat("\n ##", file,'\n\n')
+# 
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+ 
+ 
+ 
+for  (n in all_obs$n){
+  gg<-ggplot()
+  label<-all_obs$corr[n]
+  label<-paste0("$",label,"$")
+  d<- get_block_n(mt,n)
+  fit<- get_fit_n(mt,n)
+  fit_range<- get_plateaux_range(mt,n)
+  
+  gg<- many_fit_ggplot(d,fit,fit_range,length(d),"no",gg,label  )
+ # 
+  
+ 
+ l<-append(l, mean_print(fit[1,1],fit[1,2]))
+ lerr<-append(lerr, list(fit[1,1],fit[1,2]))
+
+
+
+title<- paste0(label)
+cat('\n\n ',label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+myplotly(gg, label,'$x_0/a$',label )
+
+
+
+  
+
+}
+  gdf[count,]<-l
+  gdferr[count,]<-lerr
+ count=count+1
+}
+
+gdf$v<- c(1,1,1,1,1,1,0.1,0.1,0.1,0.1,0.1,0.1)
+gdferr$v<-gdf$v
+# kable(gdf)
+
+```
+
+
+
+
+## Summary table trivial
+
+```{r,echo=FALSE,results='asis',}
+
+DT::datatable(gdf[,c(-1,-2,-5, -9)],filter = 'bottom',  rownames= FALSE,
+               options = list(  pageLength = 25, autoWidth = TRUE) )
+
+#DT::datatable(gdf[,c(1:7,8,9)],filter = 'bottom')
+#DT::datatable(gdf[,c(1:7,10,11)],filter = 'bottom')
+#DT::datatable(gdf[,c(1:7,12)],filter = 'bottom')
+```
+
+## Summary Plots trivial
+
+
+`r colorize("Please notice that there is no plateau in $M_{PS}$", "red")`
+
+
+```{r,results='asis', dev='tikz',fig.width=8.2}
+gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_ps,color=as.factor(rho),shape=as.factor(v)  ),size=3 )
+gg<- gg +geom_errorbar(aes(x=eta, ymin=m_ps-m_ps_err, ymax=m_ps+m_ps_err, color=as.factor(rho),shape=as.factor(v)  ),width=0.01)
+gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
+ggplotly(gg,dynamicTicks = TRUE)%>%
+       layout(   yaxis = list( title = TeX("M_{PS}"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) %>% add_annotations( text="$({\\color{red}\\rho}, v)$", xref="paper", yref="paper",
+                  x=1.1, xanchor="left",
+                  y=0.8, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.8, yanchor="top" ) )
+```
+
+```{r,results='asis', dev='tikz',fig.width=8.2}
+gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=r_awi,color=as.factor(rho),shape=as.factor(v) ),size=3 )
+gg<- gg +geom_errorbar(aes(x=eta, ymin=r_awi-r_awi_err, ymax=r_awi+r_awi_err, color=as.factor(rho),shape=as.factor(v)  ),width=0.01)
+gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
+
+ggplotly(gg,dynamicTicks = TRUE)%>%
+       layout(   yaxis = list( title = TeX("r_{AWI}"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) %>% add_annotations( text="$({\\color{red}\\rho}, v)$", xref="paper", yref="paper",
+                  x=1.1, xanchor="left",
+                  y=0.8, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.8, yanchor="top" ) )
+```
+
+```{r,results='asis', dev='tikz', fig.width = 8.2 }
+gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_pcac,color=as.factor(rho),shape=as.factor(v) ),size=3 )
+gg<- gg +geom_errorbar(aes(x=eta, ymin=m_pcac-m_pcac_err, ymax=m_pcac+m_pcac_err, color=as.factor(rho),shape=as.factor(v)  ),width=0.01)
+gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
+
+fig<-ggplotly(gg,dynamicTicks = TRUE) %>% add_annotations( text="$({\\color{red}\\rho}, v)$", xref="paper", yref="paper",
+                  x=1.1, xanchor="left",
+                  y=0.8, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.8, yanchor="top" ) )%>%
+       layout(   yaxis = list( title = "$m_{pcac}$",showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) 
+
+fig #print(htmltools::tagList(fig))
+
+```
