@@ -40,16 +40,19 @@ ggp   # Let knitr handle the rendering naturally
 
 ```{r,echo=FALSE,results='asis', dev='tikz',  fig.width = 9}
 gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),"r_awi"=c(0),"m_pcac"=c(0))
-gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0))
+gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0),
+                   "m_num"=c(0),"m_num_err"=c(0),"m_den"=c(0),"m_den_err"=c(0),
+                   "m_ps_chi2"=c(0),"r_awi_chi2"=c(0),"m_pcac_chi2"=c(0))
 
 gdf<-gdf[-1,]
 gdferr<-gdferr[-1,]
 #"b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
 
-dirs<-c("b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
-        "b5.85/L20T40/trivialU/eta_0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
-        "b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
-        "b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
+dirs<-c(
+  #"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
+  #      "b5.85/L20T40/trivialU/eta_0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
+  #      "b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
+  #      "b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU",
         "b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU", 
         "b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU",
         "b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU"
@@ -102,26 +105,35 @@ title<- paste0(label)
 cat('\n\n ',label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
 myplotly(gg, label,'$x_0/a$',label )
 
-
-
   
 
 }
+ 
+ for (chi2s in c(all_obs[1,4],all_obs[4,4],all_obs[5,4])){
+   nchi<-as.numeric(chi2s)
+   if (nchi<1e-6 || nchi>15|| is.na(nchi) )
+     lerr<-append(lerr,15)
+   else
+     lerr<-append(lerr,nchi)
+ }
   gdf[count,]<-l
   gdferr[count,]<-lerr
- count=count+1
+  count=count+1
+
 }
 
 
-# kable(gdf)
+kable(gdf)
 
 ```
 
 
 ## compare plots Trivial $\rho=1.96$
 
+the chi2 of the fit is the radius of the red circle around the points
 
-```{r, echo=FALSE, results='asis', dev='tikz',  fig.width=9}
+
+```{r, eval=FALSE ,echo=FALSE, results='asis', dev='tikz',  fig.width=9}
 
 T<- 40
 L<-20
@@ -189,11 +201,14 @@ DT::datatable(gdf[,c(-1,-2,-5, -9)],filter = 'bottom',  rownames= FALSE)
 ## Summary Plots trivial
 
 
-`r colorize("Please notice that there is no plateau in $M_{PS}$", "red")`
+We did not find a plateau in $M_PS$.
+The radius of the `r colorize("red","red")` circles represent of the $\chi^2$,  notice that the radius is relative to the plot and do not compare radius from different plots
 
 
 ```{r,results='asis', dev='tikz',fig.width=8.2}
 gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_ps,color=as.factor(rho),shape=as.factor(rho)  ),size=3 )
+gg<-gg+geom_point(aes(x=eta, y=m_ps, ,size=m_ps_chi2), color="red",shape=1 )
+
 gg<- gg +geom_errorbar(aes(x=eta, ymin=m_ps-m_ps_err, ymax=m_ps+m_ps_err, color=as.factor(rho),shape=as.factor(rho)  ),width=0.01)
 gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
 ggplotly(gg,dynamicTicks = TRUE)%>%
@@ -206,6 +221,8 @@ ggplotly(gg,dynamicTicks = TRUE)%>%
 
 ```{r,results='asis', dev='tikz',fig.width=8.2}
 gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=r_awi,color=as.factor(rho),shape=as.factor(rho) ),size=3 )
+gg<-gg+geom_point(aes(x=eta, y=r_awi, ,size=r_awi_chi2), color="red",shape=1 )
+
 gg<- gg +geom_errorbar(aes(x=eta, ymin=r_awi-r_awi_err, ymax=r_awi+r_awi_err, color=as.factor(rho),shape=as.factor(rho)  ),width=0.01)
 gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
 
@@ -219,6 +236,8 @@ ggplotly(gg,dynamicTicks = TRUE)%>%
 
 ```{r,results='asis', dev='tikz', fig.width = 8.2 }
 gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_pcac,color=as.factor(rho),shape=as.factor(rho) ),size=3 )
+gg<-gg+geom_point(aes(x=eta, y=m_pcac, ,size=m_pcac_chi2), color="red",shape=1 )
+
 gg<- gg +geom_errorbar(aes(x=eta, ymin=m_pcac-m_pcac_err, ymax=m_pcac+m_pcac_err, color=as.factor(rho),shape=as.factor(rho)  ),width=0.01)
 gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
 

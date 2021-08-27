@@ -41,7 +41,9 @@ ggp   # Let knitr handle the rendering naturally
 
 ```{r,echo=FALSE,results='asis', dev='tikz',  fig.width = 9}
 gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),"r_awi"=c(0),"m_pcac"=c(0))
-gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0))
+gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0),
+                   "m_num"=c(0),"m_num_err"=c(0),"m_den"=c(0),"m_den_err"=c(0),
+                   "m_ps_chi2"=c(0),"r_awi_chi2"=c(0),"m_pcac_chi2"=c(0) )
 
 gdf<-gdf[-1,]
 gdferr<-gdferr[-1,]
@@ -49,22 +51,37 @@ gdferr<-gdferr[-1,]
 
 dirs<-c(
 "b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi",
-"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
+#"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
 "b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi",
-"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
+#"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
 "b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi",
-"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
+#"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi",
 
 "b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.1",
-"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1",
 "b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.1",
-"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1",
 "b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.1",
-"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1"
+
+"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.2",
+"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.2",
+"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.2",
+
+
+"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.05",
+"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.05",
+"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi0.05"
+
+
+#"b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1",
+#"b5.85/L20T40/trivialU/eta_m0.1_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1",
+#"b5.85/L20T40/trivialU/eta_m1.0_M02_0.0_mu03_0.0_csw_1.0_rho1.96_trivialU_trivialphi0.1"
+
+
         )
+ # dirs<-c(
+ # "b5.85/L20T40/trivialU/eta_0.0_M02_0.0_mu03_0.0_csw_1.0_rho0.98_trivialU_trivialphi")
 count=1
 for (dir in dirs){
-  cat('\n\n## ',dir,'\n\n')
+  cat('\n\n## ',gsub("b5.85/L20T40/trivialU/","",dir),'\n\n')
 
 file=sprintf("../%s/data/phit",dir)
    all_file <- read.table(file,header=FALSE,fill = TRUE ,
@@ -106,28 +123,81 @@ for  (n in all_obs$n){
 
 
 
-title<- paste0(label)
-cat('\n\n ',label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
-myplotly(gg, label,'$x_0/a$',label )
-
-
-
-  
-
+ title<- paste0(label)
+ cat('\n\n ',label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+ myplotly(gg, label,'$x_0/a$',label )
 }
+
+
+
+
+ for (chi2s in c(all_obs[1,4],all_obs[4,4],all_obs[5,4])){
+   nchi<-as.numeric(chi2s)
+   if (nchi<1e-6 || nchi>15|| is.na(nchi) )
+     lerr<-append(lerr,15)
+   else
+     lerr<-append(lerr,nchi)
+ }
   gdf[count,]<-l
   gdferr[count,]<-lerr
- count=count+1
+  count=count+1
 }
 
-gdf$v<- c(1,1,1,1,1,1,0.1,0.1,0.1,0.1,0.1,0.1)
+#gdf$v<- c(1,1,1,1,1,1,  0.1,0.1,0.1, 0.2,0.2,0.2, 0.05,0.05,0.05, 0.1,0.1,0.1)
+gdf$v<- c(1,1,1,  0.1,0.1,0.1, 0.2,0.2,0.2, 0.05,0.05,0.05)
 gdferr$v<-gdf$v
 # kable(gdf)
 
 ```
 
 
+## $r_{AWI}$ compare
 
+
+```{r,echo=FALSE,results='asis',fig.width=8}
+count=1
+gg<-ggplot()
+
+for (dir in dirs){
+
+  file=sprintf("../%s/data/phit",dir)
+  all_file <- read.table(file,header=FALSE,fill = TRUE ,
+                           blank.lines.skip=FALSE,skip=0, comment.char = "")
+  head<-data.frame(c(0))
+  head<-head[,-1]
+  head$T<-all_file[1,2]
+  head$L<-all_file[2,2]
+  head$rho<-all_file[3,2]
+  head$eta<-all_file[4,2]
+  head$csw<-all_file[5,2]
+  head$mu03<-all_file[6,2]
+  head$m0<-all_file[7,2]
+  head$v<-gdf$v[count]
+  #print(kable(head))
+  
+  file=sprintf("../%s/out/T%d_L%d_output",dir,head$T,head$L)
+  mt<-read_df(file)
+  all_obs<- get_all_corr(mt)
+ 
+    string<-"r_AWI"
+   string=sprintf("\\b%s\\b",string)# need to put the delimiters on the word to grep  
+  n<-grep(string,all_obs[,"corr"])
+ 
+  #label<-all_obs$corr[n]
+  label<-paste0("$\\eta=",head$eta,", v=",head$v, ", \\rho=",head$rho,"$")
+  d<- get_block_n(mt,n)
+  fit<- get_fit_n(mt,n)
+  fit_range<- get_plateaux_range(mt,n)
+  
+  gg<- many_fit_ggplot(d,fit,fit_range,length(d),"no",gg,label  )
+ # 
+  count=count+1
+}
+
+
+ title<- ""
+ fig<-myplotly(gg, title,'$x_0/a$',"$r_{AWI}$" )
+```
 
 ## Summary table trivial
 
@@ -146,9 +216,12 @@ DT::datatable(gdf[,c(-1,-2,-5, -9)],filter = 'bottom',  rownames= FALSE,
 
 `r colorize("Please notice that there is no plateau in $M_{PS}$", "red")`
 
+the chi2 of the fit is the radius of the red circle around the points
 
 ```{r,results='asis', dev='tikz',fig.width=8.2}
 gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_ps,color=as.factor(rho),shape=as.factor(v)  ),size=3 )
+gg<-gg+geom_point(aes(x=eta, y=m_ps, ,size=m_ps_chi2), color="red",shape=1 )
+
 gg<- gg +geom_errorbar(aes(x=eta, ymin=m_ps-m_ps_err, ymax=m_ps+m_ps_err, color=as.factor(rho),shape=as.factor(v)  ),width=0.01)
 gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
 ggplotly(gg,dynamicTicks = TRUE)%>%
@@ -161,7 +234,8 @@ ggplotly(gg,dynamicTicks = TRUE)%>%
 
 ```{r,results='asis', dev='tikz',fig.width=8.2}
 gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=r_awi,color=as.factor(rho),shape=as.factor(v) ),size=3 )
-gg<- gg +geom_errorbar(aes(x=eta, ymin=r_awi-r_awi_err, ymax=r_awi+r_awi_err, color=as.factor(rho),shape=as.factor(v)  ),width=0.01)
+gg<-gg+geom_point(aes(x=eta, y=r_awi, ,size=r_awi_chi2), color="red",shape=1 )
+gg<- gg +geom_errorbar(aes(x=eta, ymin=r_awi-r_awi_err, ymax=r_awi+r_awi_err, color=as.factor(rho),apha=as.factor(v),size=1./r_awi_chi2  ),width=0.01)
 gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
 
 ggplotly(gg,dynamicTicks = TRUE)%>%
@@ -174,6 +248,8 @@ ggplotly(gg,dynamicTicks = TRUE)%>%
 
 ```{r,results='asis', dev='tikz', fig.width = 8.2 }
 gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_pcac,color=as.factor(rho),shape=as.factor(v) ),size=3 )
+gg<-gg+geom_point(aes(x=eta, y=m_pcac, ,size=m_pcac_chi2), color="red",shape=1 )
+
 gg<- gg +geom_errorbar(aes(x=eta, ymin=m_pcac-m_pcac_err, ymax=m_pcac+m_pcac_err, color=as.factor(rho),shape=as.factor(v)  ),width=0.01)
 gg<- gg+ theme_bw()+theme( legend.title = element_blank() )
 

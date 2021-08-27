@@ -28,20 +28,23 @@
 
 ```{r,echo=FALSE,results='asis', dev='tikz',  fig.width = 9}
 gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),"r_awi"=c(0),"m_pcac"=c(0))
-gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0))
+gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0),
+               "m_num"=c(0),"m_num_err"=c(0),"m_den"=c(0),"m_den_err"=c(0)
+                   )
 
 gdf<-gdf[-1,]
 gdferr<-gdferr[-1,]
 #"b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
 
-dirs<-c("b5.85/L20T40/eta_m1.0983_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
-        "b5.85/L20T40/eta_m1.0983_M02_-0.010396_mu03_0.0224_csw_1.0_rho1.96",
-        "b5.85/L20T40/eta_m1.0983_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96",
-        "b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
-        "b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
-        "b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
-        "b5.85/L20T40/eta_m1.2944_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96",
-        "b5.85/L20T40/eta_m1.2944_M02_-0.010396_mu03_0.0224_csw_1.0_rho1.96"
+dirs<-c(
+        #  "b5.85/L20T40/eta_m1.0983_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
+         "b5.85/L20T40/eta_m1.0983_M02_-0.010396_mu03_0.0224_csw_1.0_rho1.96",
+         "b5.85/L20T40/eta_m1.0983_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96",
+        # "b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
+        # "b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
+        # "b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
+        # "b5.85/L20T40/eta_m1.2944_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96",
+         "b5.85/L20T40/eta_m1.2944_M02_-0.010396_mu03_0.0224_csw_1.0_rho1.96"
         )
 count=1
 for (dir in dirs){
