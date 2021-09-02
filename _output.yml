@@ -1,13 +1,21 @@
 bookdown::gitbook:
   css: style.css
+  highlight: tango
   split_by: section
   config:
     toc:
+      collapse: section
       before: |
         <li><a href="./">Report BSM</a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
     download: ["pdf", "epub"]
+bookdown::bs4_book:
+  css: style.css
+  theme:
+    primary: "#096B72"
+  repo: https://github.com/Marcogarofalo/phi4scattering_bookdown.git
+  split_by: section
 bookdown::epub_book: 
   chapter_level: 2
 bookdown::pdf_book:

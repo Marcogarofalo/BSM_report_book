@@ -1,5 +1,6 @@
 book_filename: "report_BSM"
 delete_merged_file: true
+new_session: yes # Each chapter is knitted as its own Rmd file
 rmd_files: ["index.Rmd", 
 "report.Rmd",
 #"jack_vs_boot.Rmd",

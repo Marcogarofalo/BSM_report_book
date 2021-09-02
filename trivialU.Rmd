@@ -1,4 +1,4 @@
-# Trivial $U$
+# Trivial $U$ {#trivialU}
 
 `here we set $U=1\!\!1$ and $m_0=0$ 
 

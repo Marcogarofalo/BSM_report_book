@@ -1,5 +1,5 @@
 
-# Wigner $\beta=5.85$
+# Wigner $\beta=5.85$ {#Wb585}
 
 ```{r , include=FALSE}
  knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')

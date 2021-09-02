@@ -1,4 +1,4 @@
-# Trivial U and $\phi$
+# Trivial U and $\phi$ {#trivialU_phi}
 
 here we set $U=1\!\!1$ and $\phi=(1,0,0,0)$
 
