@@ -1,5 +1,5 @@
 
-# Wigner $\beta=5.85$ {#Wb585}
+# NG $\beta=5.85$ {#NGb585}
 
 ```{r , include=FALSE}
  knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
@@ -26,6 +26,7 @@
 
 
 
+
 ```{r,echo=FALSE,results='asis', dev='tikz',  fig.width = 9}
 gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),"r_awi"=c(0),"m_pcac"=c(0),"m_num"=c(0),"m_den"=c(0))
 gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0),
@@ -37,16 +38,11 @@ gdferr<-gdferr[-1,]
 #"b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
 
 dirs<-c(
-        #  "b5.85/L20T40/eta_m1.0983_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
-         "b5.85/L20T40/eta_m1.0983_M02_-0.010396_mu03_0.0224_csw_1.0_rho1.96",
-         "b5.85/L20T40/eta_m1.0983_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96",
-        # "b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
-        # "b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
-        # "b5.85/L20T40/eta_m1.2944_M02_-0.024604_mu03_0.0224_csw_1.0_rho1.96",
-         "b5.85/L20T40/eta_m1.2944_M02_-0.010396_mu03_0.0224_csw_1.0_rho1.96",
-         "b5.85/L20T40/eta_m1.2944_M02_-0.040000_mu03_0.0120_csw_1.0_rho1.96",
-         "b5.85/L20T40/eta_m1.2944_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96",
-         "b5.85/L20T40/eta_m1.4063_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96"
+         "b5.85/L20T40/NG/eta_m1.6_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
+         "b5.85/L20T40/NG/eta_m1.5_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
+         "b5.85/L20T40/NG/eta_m1.4063_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
+         "b5.85/L20T40/NG/eta_m1.3_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
+         "b5.85/L20T40/NG/eta_m1.2_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG"
         )
 count=1
 for (dir in dirs){
@@ -130,7 +126,7 @@ myplotly(gg, label,'$x_0/a$',label )
 
 ```
 
-## Summary table {#Summary_table_W_b585}
+## Summary table {#Summary_table_NG_b585}
 
 ```{r,echo=FALSE,results='asis',}
 #[,c(-1,-2,-3,-5)]
@@ -142,9 +138,17 @@ DT::datatable(gdf[, c(-1,-2,-3,-5,-9,-13,-14)],filter = 'bottom',  rownames = FA
      dom = 'Bfrtip',  buttons = I('colvis'),
   colReorder = TRUE)  
   )
+# DT::datatable(gdf,filter = 'bottom',  rownames = FALSE,
+#    extensions = 'Buttons', 
+#    options = list(
+#      dom = 'Bfrtip',  buttons = I('colvis') )  
+#   )
+#DT::datatable(gdf[,c(1:7,8,9)],filter = 'bottom')
+#DT::datatable(gdf[,c(1:7,10,11)],filter = 'bottom')
+#DT::datatable(gdf[,c(1:7,12)],filter = 'bottom')
 ```
 
-## Summary Plots {#Summary_Plots_W_b585}
+## Summary Plots {#Summary_Plots_NG_b585}
 
 ```{r,results='asis', dev='tikz',fig.width=8.2}
 gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_ps,color=as.factor(m0),shape=as.factor(mu03) ),size=3 )
@@ -186,7 +190,6 @@ fig<-ggplotly(gg,dynamicTicks = TRUE) %>% add_annotations( text="$(\\color{red}{
 fig #print(htmltools::tagList(fig))
 
 ```
-
 
 
 

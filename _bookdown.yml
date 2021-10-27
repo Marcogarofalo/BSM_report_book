@@ -2,9 +2,10 @@ book_filename: "report_BSM"
 delete_merged_file: true
 new_session: yes # Each chapter is knitted as its own Rmd file
 rmd_files: ["index.Rmd", 
-"report.Rmd",
+"report.Rmd", 
 #"jack_vs_boot.Rmd",
 "critical_fit_b585.Rmd",
+"report_NG_b585.Rmd",
 #"scaling_phi.Rmd",
 "trivialU.Rmd",
 "trivial_U_phi.Rmd",
