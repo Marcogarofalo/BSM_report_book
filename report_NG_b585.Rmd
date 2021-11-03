@@ -40,7 +40,10 @@ gdferr<-gdferr[-1,]
 dirs<-c(
          "b5.85/L20T40/NG/eta_m1.6_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
          "b5.85/L20T40/NG/eta_m1.5_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
+         "b5.85/L20T40/NG/eta_m1.45_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
+         "b5.85/L20T40/NG/eta_m1.45_M02_-0.040000_mu03_0.0120_csw_1.0_rho1.96_NG",
          "b5.85/L20T40/NG/eta_m1.4063_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
+         "b5.85/L20T40/NG/eta_m1.4063_M02_-0.040000_mu03_0.0120_csw_1.0_rho1.96_NG",
          "b5.85/L20T40/NG/eta_m1.3_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG",
          "b5.85/L20T40/NG/eta_m1.2_M02_-0.040000_mu03_0.0224_csw_1.0_rho1.96_NG"
         )
@@ -192,8 +195,6 @@ fig #print(htmltools::tagList(fig))
 ```
 
 
-
-### necessary to set up the rendering inside loops rendering
 
 ```{r ,include=FALSE}
 df <- data.frame(x = 1:5, y = 1:5)    
