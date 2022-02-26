@@ -27,10 +27,11 @@
 
 
 ```{r,echo=FALSE,results='asis', dev='tikz',  fig.width = 9}
-gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),"r_awi"=c(0),"m_pcac"=c(0),"m_num"=c(0),"m_den"=c(0))
+gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),"r_awi"=c(0),"m_pcac"=c(0),"m_num"=c(0),"m_den"=c(0),"r_AWI_loc"=c(0),"m_AWI_loc"=c(0))
 gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_ps"=c(0),"m_ps_err"=c(0),"m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),"r_awi"=c(0),"r_awi_err"=c(0),"m_pcac"=c(0),"m_pcac_err"=c(0),
                "m_num"=c(0),"m_num_err"=c(0),"m_den"=c(0),"m_den_err"=c(0)
-                   )
+                ,"r_AWI_loc"=c(0),"r_AWI_locerr"=c(0),
+                "m_AWI_loc"=c(0),"m_AWI_locerr"=c(0)   )
 
 gdf<-gdf[-1,]
 gdferr<-gdferr[-1,]
@@ -78,7 +79,7 @@ all_obs<- get_all_corr(mt)
 for  (n in all_obs$n){
   gg<-ggplot()
   label<-all_obs$corr[n]
-  label<-paste0("$",label,"$")
+  label<-paste0("",label,"")
   d<- get_block_n(mt,n)
   fit<- get_fit_n(mt,n)
   fit_range<- get_plateaux_range(mt,n)
@@ -155,7 +156,7 @@ ggplotly(gg,dynamicTicks = TRUE)%>%
                   x=1.10, xanchor="left",
                   y=0.8, yanchor="bottom",    # Same y as legend below
                   legendtitle=TRUE, showarrow=FALSE ) %>%
-  layout( legend=list(y=0.8, yanchor="top" ) )
+  layout( legend=list(y=0.8, yanchor="top",title=F ) )
 ```
 
 ```{r,results='asis', dev='tikz',fig.width=8.2}
@@ -168,7 +169,7 @@ ggplotly(gg,dynamicTicks = TRUE)%>%
                   x=1.10, xanchor="left",
                   y=0.8, yanchor="bottom",    # Same y as legend below
                   legendtitle=TRUE, showarrow=FALSE ) %>%
-  layout( legend=list(y=0.8, yanchor="top" ) )
+  layout( legend=list(y=0.8, yanchor="top" ,title=F) )
 ```
 
 ```{r,results='asis', dev='tikz', fig.width = 8.2 }
@@ -180,7 +181,7 @@ fig<-ggplotly(gg,dynamicTicks = TRUE) %>% add_annotations( text="$(\\color{red}{
                   x=1.10, xanchor="left",
                   y=0.8, yanchor="bottom",    # Same y as legend below
                   legendtitle=TRUE, showarrow=FALSE ) %>%
-  layout( legend=list(y=0.8, yanchor="top" ) )%>%
+  layout( legend=list(y=0.8, yanchor="top",title=F ) )%>%
        layout(   yaxis = list( title = "$m_{pcac}$",showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) 
 
 fig #print(htmltools::tagList(fig))

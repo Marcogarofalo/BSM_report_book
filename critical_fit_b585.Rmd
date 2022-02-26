@@ -1,4 +1,4 @@
-## critical fit $\beta=5.85$
+## critical fit W $\beta=5.85$ {#critical_fit_W_beta585}
 
 ```{r , include=FALSE}
  knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
@@ -86,7 +86,8 @@ gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
 fig_pdf<- myplotly(gg,"", "$\\eta$", "$r_{AWI}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
                   x=1.10, xanchor="left",
                   y=0.75, yanchor="bottom",    # Same y as legend below
-                  legendtitle=TRUE, showarrow=FALSE ) 
+                  legendtitle=F, showarrow=FALSE )  %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
 
 fig_pdf
 
@@ -127,7 +128,8 @@ gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
 fig_pdf<- myplotly(gg,"", "$\\eta$", "$m_{PCAC}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
                   x=1.10, xanchor="left",
                   y=0.75, yanchor="bottom",    # Same y as legend below
-                  legendtitle=TRUE, showarrow=FALSE ) 
+                  legendtitle=F, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
 
 fig_pdf
 
@@ -201,7 +203,8 @@ gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
 fig_pdf<- myplotly(gg,"", "$\\eta$", "$r_{AWI}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
                   x=1.10, xanchor="left",
                   y=0.75, yanchor="bottom",    # Same y as legend below
-                  legendtitle=TRUE, showarrow=FALSE ) 
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
 
 fig_pdf
 
@@ -242,7 +245,368 @@ gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
 fig_pdf<- myplotly(gg,"", "$\\eta$", "$m_{PCAC}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
                   x=1.10, xanchor="left",
                   y=0.75, yanchor="bottom",    # Same y as legend below
-                  legendtitle=TRUE, showarrow=FALSE ) 
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
+
+
+
+## locacl AWI
+
+
+### Simplified fit
+
+
+The fit formula 
+
+$$
+\begin{cases}
+r_{AWI}^{loc}=P[2]  (\eta- \eta_{cr})  +P[3] (m_0-m_{cr}) \\
+m_{PCAC}^{loc}=  +P[4] (m_0-m_{cr}) + P[5] \mu\,.
+\end{cases}
+$$
+In the above fit we are treating $\eta_{cr}$ and $m_{cr}$  as fits parameters, so
+$$
+\eta_{cr}=P[0]\\
+m_{cr}=P[1]
+$$
+
+```{r , child="../fit_all_out/eta_m0_loc_critical_b585_simple_fit_P.tex", eval=TRUE}
+```
+
+
+
+```{r, echo=FALSE, results='asis'}
+file=sprintf("../fit_all_out/eta_m0_loc_critical_b585_simple_fit_data.txt")
+dfn<- read.table(file, header=FALSE, fill=TRUE)
+#names(df) <- c("$L$","$k/m$","err", "$T$","$q2$")
+#df<- df[c("$T$","$L$","$k/m$","err" ,"$q2$")] 
+#kable(df[,-5],digit=20)
+n0<-which(dfn[,1]==0)
+df0<-dfn[n0,]
+n1<-which(dfn[,1]==1)
+df1<-dfn[n1,]
+gg<- ggplot()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df0[,7] , y=df0[,2],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9])  ) ,width=0.001)+labs(color = "momentum")
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df0[,7] , ymin=df0[,2]-df0[,3],
+                          ymax=df0[,2]+df0[,3],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9]) ) ,width=0.001)
+
+
+datalist = list()
+n<-0
+for (en in c(1:length(df0[,1])) ){
+   
+  file=sprintf("../fit_all_out/eta_m0_loc_critical_b585_simple_fit_out_n%d_en%d_eta.txt",n,en-1)
+  datalist[[en]]<- read.table(file, header=FALSE, fill=TRUE,   
+                  col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+ 
+  gg<-gg + geom_ribbon(data=datalist[[en]], 
+                       mapping=aes_string(x=datalist[[en]][,1] ,
+                                          ymin=datalist[[en]][,2]-datalist[[en]][,3], 
+                                          ymax=datalist[[en]][,2]+datalist[[en]][,3],
+                                          color=as.factor(df1[en,10]), fill=as.factor(df1[en,10]),
+                                          shape=as.factor(df1[en,9])),
+                        alpha=0.5,  )
+ # gg<-gg + geom_line(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] , y=datalist[[en]][,2]  ),color="blue" )
+ 
+}
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$r_{AWI}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
+
+
+
+```{r, echo=FALSE, results='asis'}
+
+gg<- ggplot()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df1[,7] , y=df1[,2],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9]) ),  width=0.001)+labs(color = "momentum")
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df1[,7] , ymin=df1[,2]-df1[,3],
+                          ymax=df1[,2]+df1[,3],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9])) ,width=0.001)
+
+
+datalist = list()
+n<-1
+for (en in c(1:length(df1[,1])) ){
+   
+  file=sprintf("../fit_all_out/eta_m0_loc_critical_b585_simple_fit_out_n%d_en%d_eta.txt",n,en-1)
+  datalist[[en]]<- read.table(file, header=FALSE, fill=TRUE,   
+                  col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+ 
+  gg<-gg + geom_ribbon(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] ,    ymin=datalist[[en]][,2]-datalist[[en]][,3], ymax=datalist[[en]][,2]+datalist[[en]][,3], 
+color=as.factor(df1[en,10]), fill=as.factor(df1[en,10]),
+                          shape=as.factor(df1[en,9])                                                                ),alpha=0.5,  )
+ # gg<-gg + geom_line(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] , y=datalist[[en]][,2]  ),color="blue" )
+ 
+}
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$m_{PCAC}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
+
+
+
+## tau=2
+
+### Simplified fit
+
+
+The fit formula with tau="
+
+$$
+\begin{cases}
+r_{AWI}=P[2]  (\eta- \eta_{cr})  +P[3] (m_0-m_{cr}) \\
+m_{PCAC}=  +P[4] (m_0-m_{cr}) + P[5] \mu\,.
+\end{cases}
+$$
+In the above fit we are treating $\eta_{cr}$ and $m_{cr}$  as fits parameters, so
+$$
+\eta_{cr}=P[0]\\
+m_{cr}=P[1]
+$$
+
+```{r , child="../fit_all_out/r_awi_tau2_critical_b585_simple_fit_P.tex", eval=TRUE}
+```
+
+
+
+```{r, echo=FALSE, results='asis'}
+file=sprintf("../fit_all_out/r_awi_tau2_critical_b585_simple_fit_data.txt")
+dfn<- read.table(file, header=FALSE, fill=TRUE)
+#names(df) <- c("$L$","$k/m$","err", "$T$","$q2$")
+#df<- df[c("$T$","$L$","$k/m$","err" ,"$q2$")] 
+#kable(df[,-5],digit=20)
+n0<-which(dfn[,1]==0)
+df0<-dfn[n0,]
+n1<-which(dfn[,1]==1)
+df1<-dfn[n1,]
+gg<- ggplot()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df0[,7] , y=df0[,2],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9])  ) ,width=0.001)+labs(color = "momentum")
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df0[,7] , ymin=df0[,2]-df0[,3],
+                          ymax=df0[,2]+df0[,3],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9]) ) ,width=0.001)
+
+
+datalist = list()
+n<-0
+for (en in c(1:length(df0[,1])) ){
+   
+  file=sprintf("../fit_all_out/r_awi_tau2_critical_b585_simple_fit_out_n%d_en%d_eta.txt",n,en-1)
+  datalist[[en]]<- read.table(file, header=FALSE, fill=TRUE,   
+                  col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+ 
+  gg<-gg + geom_ribbon(data=datalist[[en]], 
+                       mapping=aes_string(x=datalist[[en]][,1] ,
+                                          ymin=datalist[[en]][,2]-datalist[[en]][,3], 
+                                          ymax=datalist[[en]][,2]+datalist[[en]][,3],
+                                          color=as.factor(df1[en,10]), fill=as.factor(df1[en,10]),
+                                          shape=as.factor(df1[en,9])),
+                        alpha=0.5,  )
+ # gg<-gg + geom_line(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] , y=datalist[[en]][,2]  ),color="blue" )
+ 
+}
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$r_{AWI}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
+
+
+
+```{r, echo=FALSE, results='asis'}
+
+gg<- ggplot()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df1[,7] , y=df1[,2],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9]) ),  width=0.001)+labs(color = "momentum")
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df1[,7] , ymin=df1[,2]-df1[,3],
+                          ymax=df1[,2]+df1[,3],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9])) ,width=0.001)
+
+
+datalist = list()
+n<-1
+for (en in c(1:length(df1[,1])) ){
+   
+  file=sprintf("../fit_all_out/r_awi_tau2_critical_b585_simple_fit_out_n%d_en%d_eta.txt",n,en-1)
+  datalist[[en]]<- read.table(file, header=FALSE, fill=TRUE,   
+                  col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+ 
+  gg<-gg + geom_ribbon(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] ,    ymin=datalist[[en]][,2]-datalist[[en]][,3], ymax=datalist[[en]][,2]+datalist[[en]][,3], 
+color=as.factor(df1[en,10]), fill=as.factor(df1[en,10]),
+                          shape=as.factor(df1[en,9])                                                                ),alpha=0.5,  )
+ # gg<-gg + geom_line(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] , y=datalist[[en]][,2]  ),color="blue" )
+ 
+}
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$m_{PCAC}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
+
+
+
+
+### Simplified fit local rawi
+
+
+The fit formula with tau="
+
+$$
+\begin{cases}
+r_{AWI}^{loc}=P[2]  (\eta- \eta_{cr})  +P[3] (m_0-m_{cr}) \\
+m_{PCAC}^{loc}=  +P[4] (m_0-m_{cr}) + P[5] \mu\,.
+\end{cases}
+$$
+In the above fit we are treating $\eta_{cr}$ and $m_{cr}$  as fits parameters, so
+$$
+\eta_{cr}=P[0]\\
+m_{cr}=P[1]
+$$
+
+```{r , child="../fit_all_out/r_awi_loc_tau2_critical_b585_simple_fit_P.tex", eval=TRUE}
+```
+
+
+
+```{r, echo=FALSE, results='asis'}
+file=sprintf("../fit_all_out/r_awi_loc_tau2_critical_b585_simple_fit_data.txt")
+dfn<- read.table(file, header=FALSE, fill=TRUE)
+#names(df) <- c("$L$","$k/m$","err", "$T$","$q2$")
+#df<- df[c("$T$","$L$","$k/m$","err" ,"$q2$")] 
+#kable(df[,-5],digit=20)
+n0<-which(dfn[,1]==0)
+df0<-dfn[n0,]
+n1<-which(dfn[,1]==1)
+df1<-dfn[n1,]
+gg<- ggplot()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df0[,7] , y=df0[,2],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9])  ) ,width=0.001)+labs(color = "momentum")
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df0[,7] , ymin=df0[,2]-df0[,3],
+                          ymax=df0[,2]+df0[,3],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9]) ) ,width=0.001)
+
+
+datalist = list()
+n<-0
+for (en in c(1:length(df0[,1])) ){
+   
+  file=sprintf("../fit_all_out/r_awi_loc_tau2_critical_b585_simple_fit_out_n%d_en%d_eta.txt",n,en-1)
+  datalist[[en]]<- read.table(file, header=FALSE, fill=TRUE,   
+                  col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+ 
+  gg<-gg + geom_ribbon(data=datalist[[en]], 
+                       mapping=aes_string(x=datalist[[en]][,1] ,
+                                          ymin=datalist[[en]][,2]-datalist[[en]][,3], 
+                                          ymax=datalist[[en]][,2]+datalist[[en]][,3],
+                                          color=as.factor(df1[en,10]), fill=as.factor(df1[en,10]),
+                                          shape=as.factor(df1[en,9])),
+                        alpha=0.5,  )
+ # gg<-gg + geom_line(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] , y=datalist[[en]][,2]  ),color="blue" )
+ 
+}
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$r_{AWI}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
+
+
+
+```{r, echo=FALSE, results='asis'}
+
+gg<- ggplot()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df1[,7] , y=df1[,2],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9]) ),  width=0.001)+labs(color = "momentum")
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df1[,7] , ymin=df1[,2]-df1[,3],
+                          ymax=df1[,2]+df1[,3],
+                          color=as.factor(df1[,10]), fill=as.factor(df1[,10]),
+                          shape=as.factor(df1[,9])) ,width=0.001)
+
+
+datalist = list()
+n<-1
+for (en in c(1:length(df1[,1])) ){
+   
+  file=sprintf("../fit_all_out/r_awi_loc_tau2_critical_b585_simple_fit_out_n%d_en%d_eta.txt",n,en-1)
+  datalist[[en]]<- read.table(file, header=FALSE, fill=TRUE,   
+                  col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+ 
+  gg<-gg + geom_ribbon(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] ,    ymin=datalist[[en]][,2]-datalist[[en]][,3], ymax=datalist[[en]][,2]+datalist[[en]][,3], 
+color=as.factor(df1[en,10]), fill=as.factor(df1[en,10]),
+                          shape=as.factor(df1[en,9])                                                                ),alpha=0.5,  )
+ # gg<-gg + geom_line(data=datalist[[en]], mapping=aes_string(x=datalist[[en]][,1] , y=datalist[[en]][,2]  ),color="blue" )
+ 
+}
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$m_{PCAC}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="$(\\color{red}{m}_{\\color{cyan}0},\\mu_3)$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
 
 fig_pdf
 

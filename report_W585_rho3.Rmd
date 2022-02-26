@@ -1,0 +1,272 @@
+
+# Wigner $\beta=5.85$ $\rho=3$ {#Wb585_rho3}
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+```
+
+
+
+
+```{r,echo=FALSE,results='asis', dev='tikz',  fig.width = 9}
+
+#gdf<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),"csw"=c(0),
+#                 "mu03"=c(0),"m0"=c(0),
+#                 "m_PS"=c(0),"m_Ds3"=c(0),"m_S0"=c(0),
+#                 "r_AWI_tau5"=c(0),"m_AWI"=c(0),"m_num"=c(0),
+#                 "m_den"=c(0),"r_AWI_tau5_loc"=c(0),"m_AWI_loc"=c(0),
+#                 "r_AWI_tau5_wall2"=c(0),"r_AWI_tau5_wall3"=c(0),
+#                 "r_AWI_tau5_loc_wall2"=c(0),"r_AWI_tau5_loc_wall3"=c(0) )
+# 
+# gdferr<-data.frame("T"=c(0),"L"=c(0),"rho"=c(0),"eta"=c(0),
+#                    "csw"=c(0),"mu03"=c(0),"m0"=c(0),"m_PS"=c(0),"m_PS_err"=c(0),
+#                    "m_Ds3"=c(0),"m_Ds3_err"=c(0),"m_S0"=c(0),"m_S0_err"=c(0),
+#                    "r_AWI_tau5"=c(0),"r_AWI_tau5_err"=c(0),"m_AWI"=c(0),"m_AWI_err"=c(0),
+#                "m_num"=c(0),"m_num_err"=c(0),"m_den"=c(0),"m_den_err"=c(0)
+#                 ,"r_AWI_tau5_loc"=c(0),"r_AWI_tau5_locerr"=c(0),
+#                 "m_AWI_loc"=c(0),"m_AWI_locerr"=c(0),
+#                "r_AWI_tau5_wall2"=c(0),"r_AWI_tau5_wall2_err"=c(0),
+#                "r_AWI_tau5_wall3"=c(0),"r_AWI_tau5_wall3_err"=c(0),
+#                "r_AWI_tau5_loc_wall2"=c(0),"r_AWI_tau5_loc_wall2_err"=c(0),
+#                "r_AWI_tau5_loc_wall3"=c(0),"r_AWI_tau5_loc_wall3_err"=c(0)
+#                )
+# 
+# gdf<-gdf[-1,]
+# gdferr<-gdferr[-1,]
+#"b5.85/L20T40/eta_m1.1375_M02_-0.024604_mu03_0.0120_csw_1.0_rho1.96",
+
+dirs <- c(
+         "b5.85/L20T40/eta_m1.5_M02_-0.040000_mu03_0.0224_csw_1.0_rho3",
+         "b5.85/L20T40/eta_m2.0_M02_-0.045000_mu03_0.0224_csw_1.0_rho3",
+         "b5.85/L20T40/eta_m2.0_M02_-0.040000_mu03_0.0224_csw_1.0_rho3",
+         "b5.85/L20T40/eta_m2.0_M02_-0.010396_mu03_0.0224_csw_1.0_rho3",
+         "b5.85/L20T40/eta_m2.0_M02_-0.045000_mu03_0.0400_csw_1.0_rho3",
+         "b5.85/L20T40/eta_m2.1_M02_-0.045000_mu03_0.0224_csw_1.0_rho3"
+        )
+count<-1
+
+#####setting up
+file=sprintf("../%s/out/T%d_L%d_output",dirs[1],40,20)
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gdf<-data.frame(matrix(NA, nrow = length( dirs), ncol = length( all_obs$n)+7 ) )
+gdferr<-data.frame(matrix(NA, nrow = length( dirs), ncol = length( all_obs$n)*2+7 ) )
+names(gdf)<-c("T","L","rho","eta","csw","mu03","m0",all_obs$corr)
+l<- c("T","L","rho","eta","csw","mu03","m0")
+for  (n in all_obs$n){
+  l<- c(l,all_obs$corr[n])
+  l<- c(l,paste0(all_obs$corr[n],"_err") )
+}
+names(gdferr)  <- l
+###############
+   
+for (dir in dirs){
+cat('\n\n## ',dir,'\n\n')
+
+file=sprintf("../%s/data/phit",dir)
+   all_file <- read.table(file,header=FALSE,fill = TRUE ,
+                         blank.lines.skip=FALSE,skip=0, comment.char = "")
+head<-data.frame(c(0))
+head<-head[,-1]
+head$T<-all_file[1,2]
+head$L<-all_file[2,2]
+head$rho<-all_file[3,2]
+head$eta<-all_file[4,2]
+head$csw<-all_file[5,2]
+head$mu03<-all_file[6,2]
+head$m0<-all_file[7,2]
+print(kable(head))
+l<-head[1,]
+lerr<-head[1,]
+file=sprintf("../%s/out/T%d_L%d_output",dir,head$T,head$L)
+# cat("\n ##", file,'\n\n')
+# 
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+ 
+ 
+ 
+for  (n in all_obs$n){
+  gg<-ggplot()
+  label<-all_obs$corr[n]
+  label<-paste0("",label,"")
+  d<- get_block_n(mt,n)
+  fit<- get_fit_n(mt,n)
+  fit_range<- get_plateaux_range(mt,n)
+  # mydf<-reshape_df_analysis_to_ggplot(d)
+  # gg <- gg + ggplot2::geom_point(data=mydf,mapping=aes(x=x, y=y),inherit.aes = FALSE)
+  # 
+  # gg <- gg +ggplot2::geom_errorbar(data=mydf, mapping=aes(x=x, ymin=y-err, ymax=y+err),
+  #                                  width = 0.3,inherit.aes = FALSE)
+  # 
+  # 
+  # gg <- gg +ggplot2::geom_ribbon( data=mydf,
+  #               mapping=aes(x=xfit, ymin=fit-errfit,ymax=fit+errfit ),color=NA
+  #                                 ,alpha=0.2      ,inherit.aes = FALSE, show.legend = FALSE)
+  # fit_range<-fit_range
+  # 
+  # gg <- gg+ ggplot2::geom_line(data=mydf, aes(x=fit_range[1],y=y),alpha=0.3, linetype="dashed",)
+  # gg <- gg+ ggplot2::geom_line( data=mydf ,aes(x=fit_range[2],y=y),alpha=0.3, linetype="dashed")
+  # gg <- gg+ggplot2::theme_bw()
+  gg<- many_fit_ggplot(d,fit,fit_range,length(d),"no",gg,label  )
+ # 
+  
+cat('\n\n ',label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+ l<-append(l, mean_print(fit[1,1],fit[1,2]))
+ lerr<-append(lerr, list(fit[1,1],fit[1,2]))
+
+#  # plot(gg)
+# fig<-ggplotly(gg,dynamicTicks = TRUE)%>%
+#        layout(   yaxis = list( title = TeX("c(t)"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("t") ) )
+# 
+# cat("\n\n")
+# print(htmltools::tagList(fig))
+# cat("\n\n")
+
+title<- paste0(label)
+myplotly(gg, label,'$x_0/a$',label )
+
+
+
+  
+
+}
+  gdf[count,]<-l
+  gdferr[count,]<-lerr
+ count=count+1
+}
+
+
+# kable(gdf)
+
+```
+
+## Summary table {#Summary_table_W_b585_rho3}
+
+```{r,echo=FALSE,results='asis',}
+#[,c(-1,-2,-3,-5)]
+DT::datatable(gdf[, c(-1,-2,-3,-5,-9,-13,-14)],filter = 'bottom',  rownames = FALSE,
+              extensions = c('Scroller','Buttons','ColReorder'), options = list(
+  deferRender = TRUE,
+  scrollX = TRUE,
+  scroller = TRUE,
+     dom = 'Bfrtip',  buttons = I('colvis'),
+  colReorder = TRUE)  
+  )
+```
+
+<!-- ## Summary Plots {#Summary_Plots_W_b585_rho3} -->
+
+<!-- ```{r,results='asis', dev='tikz',fig.width=8.2} -->
+<!-- gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_PS,color=as.factor(m0),shape=as.factor(mu03) ),size=3 ) -->
+<!-- gg<- gg +geom_errorbar(aes(x=eta, ymin=m_PS-m_PS_err, ymax=m_PS+m_PS_err, color=as.factor(m0),shape=as.factor(mu03)  ),width=0.01) -->
+<!-- gg<- gg+ theme_bw()+theme( legend.title = element_blank() ) -->
+<!-- ggplotly(gg,dynamicTicks = TRUE)%>% -->
+<!--        layout(   yaxis = list( title = TeX("M_{PS}"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) %>% add_annotations( text="$(\\color{red}{m_{\\color{blue}0}},\\mu_3)$", xref="paper", yref="paper", -->
+<!--                   x=1.10, xanchor="left", -->
+<!--                   y=0.8, yanchor="bottom",    # Same y as legend below -->
+<!--                   legendtitle=TRUE, showarrow=FALSE ) %>% -->
+<!--   layout( legend=list(y=0.8, yanchor="top",title=F ) ) -->
+<!-- ``` -->
+
+<!-- ```{r,results='asis', dev='tikz',fig.width=8.2} -->
+<!-- gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=r_AWI_tau5,color=as.factor(m0),shape=as.factor(mu03) ),size=3 ) -->
+<!-- gg<- gg +geom_errorbar(aes(x=eta, ymin=r_AWI_tau5-r_AWI_tau5_err, ymax=r_AWI_tau5+r_AWI_tau5_err, color=as.factor(m0),shape=as.factor(mu03)  ),width=0.01) -->
+<!-- gg<- gg+ theme_bw()+theme( legend.title = element_blank() ) -->
+
+<!-- ggplotly(gg,dynamicTicks = TRUE)%>% -->
+<!--        layout(   yaxis = list( title = TeX("r_{AWI}(tau=5)"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) %>% add_annotations( text="$(\\color{red}{m_{\\color{blue}0}},\\mu_3)$", xref="paper", yref="paper", -->
+<!--                   x=1.10, xanchor="left", -->
+<!--                   y=0.8, yanchor="bottom",    # Same y as legend below -->
+<!--                   legendtitle=TRUE, showarrow=FALSE ) %>% -->
+<!--   layout( legend=list(y=0.8, yanchor="top" ,title=F) ) -->
+<!-- ``` -->
+
+<!-- ```{r,results='asis', dev='tikz',fig.width=8.2} -->
+<!-- gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=r_AWI_tau2,color=as.factor(m0),shape=as.factor(mu03) ),size=3 ) -->
+<!-- gg<- gg +geom_errorbar(aes(x=eta, ymin=r_AWI_tau2-r_AWI_tau2_err, ymax=r_AWI_tau2+r_AWI_tau2_err, color=as.factor(m0),shape=as.factor(mu03)  ),width=0.01) -->
+<!-- gg<- gg+ theme_bw()+theme( legend.title = element_blank() ) -->
+
+<!-- ggplotly(gg,dynamicTicks = TRUE)%>% -->
+<!--        layout(   yaxis = list( title = TeX("r_{AWI}(tau=2)"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) %>% add_annotations( text="$(\\color{red}{m_{\\color{blue}0}},\\mu_3)$", xref="paper", yref="paper", -->
+<!--                   x=1.10, xanchor="left", -->
+<!--                   y=0.8, yanchor="bottom",    # Same y as legend below -->
+<!--                   legendtitle=TRUE, showarrow=FALSE ) %>% -->
+<!--   layout( legend=list(y=0.8, yanchor="top" ,title=F) ) -->
+<!-- ``` -->
+
+<!-- ```{r,results='asis', dev='tikz', fig.width = 8.2 } -->
+<!-- gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=m_AWI,color=as.factor(m0),shape=as.factor(mu03) ),size=3 ) -->
+<!-- gg<- gg +geom_errorbar(aes(x=eta, ymin=m_AWI-m_AWI_err, ymax=m_AWI+m_AWI_err, color=as.factor(m0),shape=as.factor(mu03)  ),width=0.01) -->
+<!-- gg<- gg+ theme_bw()+theme( legend.title = element_blank() ) -->
+
+<!-- fig<-ggplotly(gg,dynamicTicks = TRUE) %>% add_annotations( text="$(\\color{red}{m}_{\\color{blue}0},\\mu_3)$", xref="paper", yref="paper", -->
+<!--                   x=1.10, xanchor="left", -->
+<!--                   y=0.8, yanchor="bottom",    # Same y as legend below -->
+<!--                   legendtitle=TRUE, showarrow=FALSE ) %>% -->
+<!--   layout( legend=list(y=0.8, yanchor="top", title=F ) )%>% -->
+<!--        layout(   yaxis = list( title = "$m_{pcac}$",showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) )  -->
+
+<!-- fig #print(htmltools::tagList(fig)) -->
+
+<!-- ``` -->
+
+
+<!-- ```{r,results='asis', dev='tikz',fig.width=8.2} -->
+<!-- gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=r_AWI_loc_tau5,color=as.factor(m0),shape=as.factor(mu03) ),size=3 ) -->
+<!-- gg<- gg +geom_errorbar(aes(x=eta, ymin=r_AWI_loc_tau5-r_AWI_loc_tau5_err, ymax=r_AWI_loc_tau5+r_AWI_loc_tau5_err, color=as.factor(m0),shape=as.factor(mu03)  ),width=0.01) -->
+<!-- gg<- gg+ theme_bw()+theme( legend.title = element_blank() ) -->
+
+<!-- ggplotly(gg,dynamicTicks = TRUE)%>% -->
+<!--        layout(   yaxis = list( title = TeX("r_{AWI}^{loc}(tau=5)"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) %>% add_annotations( text="$(\\color{red}{m_{\\color{blue}0}},\\mu_3)$", xref="paper", yref="paper", -->
+<!--                   x=1.10, xanchor="left", -->
+<!--                   y=0.8, yanchor="bottom",    # Same y as legend below -->
+<!--                   legendtitle=TRUE, showarrow=FALSE ) %>% -->
+<!--   layout( legend=list(y=0.8, yanchor="top" ,title=F) ) -->
+<!-- ``` -->
+
+
+<!-- ```{r,results='asis', dev='tikz',fig.width=8.2} -->
+<!-- gg<- ggplot(gdferr)+geom_point(aes(x=eta, y=r_AWI_tau5_wall2,color=as.factor(m0),shape=as.factor(mu03) ),size=3 ) -->
+<!-- gg<- gg +geom_errorbar(aes(x=eta, ymin=r_AWI_tau5_wall2-r_AWI_tau5_wall2_err, ymax=r_AWI_tau5_wall2+r_AWI_tau5_wall2_err, color=as.factor(m0),shape=as.factor(mu03)  ),width=0.01) -->
+<!-- gg<- gg+ theme_bw()+theme( legend.title = element_blank() ) -->
+
+<!-- ggplotly(gg,dynamicTicks = TRUE)%>% -->
+<!--        layout(   yaxis = list( title = TeX("r_{AWI}^{wall2}(tau=5)"),showexponent = "all", exponentformat = "e")  ,xaxis = list(title = TeX("\\eta") ) ) %>% add_annotations( text="$(\\color{red}{m_{\\color{blue}0}},\\mu_3)$", xref="paper", yref="paper", -->
+<!--                   x=1.10, xanchor="left", -->
+<!--                   y=0.8, yanchor="bottom",    # Same y as legend below -->
+<!--                   legendtitle=TRUE, showarrow=FALSE ) %>% -->
+<!--   layout( legend=list(y=0.8, yanchor="top" ,title=F) ) -->
+<!-- ``` -->
+
+### necessary to set up the rendering inside loops rendering
+
+```{r ,include=FALSE}
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
+```

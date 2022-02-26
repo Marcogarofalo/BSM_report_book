@@ -1,0 +1,107 @@
+## compare NG $\beta=5.85$ $\rho=3 ,1.96$ {#compare_fit_NG_beta585_rho3}
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+```
+
+
+
+
+```{r, echo=FALSE, results='asis'}
+file=sprintf("../fit_all_out/fit_NG_mpcac_MPS_b585_rho3_lines_fit_data.txt")
+dfn<- read.table(file, header=FALSE, fill=TRUE)
+n0<-which(dfn[,1]==0)
+df0<-dfn[n0,]
+n1<-which(dfn[,1]==1)
+df1<-dfn[n1,]
+gg<- ggplot()+theme_bw()
+gg<-gg+  geom_point(data=df0, mapping=aes(x=df0[,7] , y=df0[,2],
+                          color=as.factor(df0[,9]), 
+                          shape=as.factor(df0[,10])  ) ,width=0.003)
+gg<-gg + geom_errorbar(data=df0, mapping=aes(x=df0[,7] , ymin=df0[,2]-df0[,3],
+                          ymax=df0[,2]+df0[,3],
+                          color=as.factor(df0[,9]), 
+                          shape=as.factor(df0[,10]) ) ,width=0.001)
+
+file=sprintf("../fit_all_out/fit_NG_mpcac_MPS_b585_fit_data.txt")
+dfn<- read.table(file, header=FALSE, fill=TRUE)
+n0<-which(dfn[,1]==0)
+df0_r<-dfn[n0,]
+n1<-which(dfn[,1]==1)
+df1_r<-dfn[n1,]
+gg<-gg+  geom_point(data=df0_r, mapping=aes(x=df0_r[,7] , y=df0_r[,2],
+                          color=as.factor(df0_r[,9]), 
+                          shape=as.factor(df0_r[,10])  ) ,width=0.001)
+gg<-gg + geom_errorbar(data=df0_r, mapping=aes(x=df0_r[,7] , ymin=df0_r[,2]-df0_r[,3],
+                          ymax=df0_r[,2]+df0_r[,3],
+                          color=as.factor(df0_r[,9]), 
+                          shape=as.factor(df0_r[,10]) ) ,width=0.001)
+
+
+
+
+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$m_{pcac}$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="${\\color{red}\\mu}, m_0$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
+
+
+
+
+
+
+```{r, echo=FALSE, results='asis'}
+
+gg<- ggplot()
+gg<-gg+  geom_point( mapping=aes(x=df1[,7] , y=df1[,2],
+                           color=as.factor(df1[,9]), 
+                          shape=as.factor(df1[,10])   ),  width=0.001 )
+gg<-gg + geom_errorbar( mapping=aes(x=df1[,7] , ymin=df1[,2]-df1[,3],
+                          ymax=df1[,2]+df1[,3],
+                           color=as.factor(df1[,9]), 
+                          shape=as.factor(df1[,10])  ) ,width=0.001)
+
+gg<-gg+  geom_point( mapping=aes(x=df1_r[,7] , y=df1_r[,2],
+                          color=as.factor(df1_r[,9]), 
+                          shape=as.factor(df1_r[,10])   ),  width=0.001)
+gg<-gg + geom_errorbar( mapping=aes(x=df1_r[,7] , ymin=df1_r[,2]-df1_r[,3],
+                          ymax=df1_r[,2]+df1_r[,3],
+                          color=as.factor(df1_r[,9]), 
+                          shape=as.factor(df1_r[,10])   ) ,width=0.001)
+
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+gg<- gg+labs(color = "", shape= "")#+scale_shape_manual(values=c(1:50))+
+fig_pdf<- myplotly(gg,"", "$\\eta$", "$M_{PS}^2$",  output="AUTO",to_print = FALSE)%>% add_annotations( text="${\\color{red}\\mu}, m_0$", xref="paper", yref="paper",
+                  x=1.10, xanchor="left",
+                  y=0.75, yanchor="bottom",    # Same y as legend below
+                  legendtitle=TRUE, showarrow=FALSE ) %>%
+  layout( legend=list(y=0.7, yanchor="top",title=F ) )
+
+fig_pdf
+
+```
